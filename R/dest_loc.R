@@ -7,7 +7,6 @@
 #' @importFrom rvest html_nodes
 #' @importFrom xml2 xml_find_all
 #' @importFrom rvest html_text
-#' @importFrom base paste0
 #' @importFrom dplyr full_join
 #'
 #' @examples

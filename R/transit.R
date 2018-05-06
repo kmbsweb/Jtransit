@@ -9,7 +9,6 @@
 #' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_text
-#' @importFrom base paste0
 #'
 #' @examples
 #' \dontrun{
