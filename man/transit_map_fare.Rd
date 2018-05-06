@@ -20,7 +20,6 @@ mapping fare
 }
 \examples{
 \dontrun{
-# from Kobe university to Osaka station departure:12:20
 # center:Kobe University
 transit.map.fare(135.235395,34.725918,11,Data)
 }
