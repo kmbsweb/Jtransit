@@ -1,9 +1,9 @@
 # Jtransit
 
 ## Inroduction
-Traffic influence not only economic activity, but also human bahavior. In our daily life, we use car, rail way, bus and go anywhere walk and railway from your home. 
-It is very important to understand traffic system, especially service area. Service areas created by Network Analyst also help evaluate accessibility. Concentric service areas show how accessibility varies with impedance.
-To create service area, we have to gather transit dara. Except Japan, it is possible to get the transit data(duration, fare...) from google API. Also ArcGIS provide some function to create service area. However, it is very expensive for student. So this package provide some function to get transit data from yahoo transit service.
+Traffic influence not only economic activity, but also human bahavior. In our daily life, we use car, rail way, bus and other vehicles, we go somewhere by walk and railway from your home.  
+It is very important to understand traffic system, especially service area. Service areas created by Network Analyst also help evaluate accessibility. Concentric service areas show how accessibility varies with impedance.  
+To create service area, we have to gather transit dara. Except Japan, it is possible to get the transit data(duration, fare...) from google API. Also ArcGIS(ESRI) provide some function to create service area. However, it is very expensive for student to use such charged software. So this package provide some function to get transit data from [yahoo transit service](https://transit.yahoo.co.jp/ "yahoo transit service").
 The aim of this package is creating service area.
 
 ![](https://github.com/kmbsweb/Jtransit/blob/master/pic/fare%20vs%20duration.PNG?raw=true)
@@ -29,12 +29,19 @@ devtools::install_github("kmbsweb/Jtransit")
 
 ## Features
 
-*`v4`*
+*`function`*
 
 - `transit` - get duration and fare from origin to destianation.
+- `covert_m` - converting unit(from hour to minute).
 - `dest.loc` - facility geocoding.
 - `transit.map.fare` - create map of fare.
 - `transit.map.dura` - create map of duration.
+
+*`data`*
+
+- `all_sta` - station geometry data all over Japan.
+- `hyo_sta` - station geometry data all over Hyogo prefecture.
+
 
 See `NEWS.md` for changes.
 
