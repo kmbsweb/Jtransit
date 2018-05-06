@@ -8,7 +8,6 @@ The aim of this package is creating service area.
 
 ![](https://github.com/kmbsweb/Jtransit/blob/master/pic/fare%20vs%20duration.PNG?raw=true)
 
-YUIYUI
 
 * [Install](#install)
 * [Documentation](#documentation)
