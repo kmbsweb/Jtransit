@@ -6,7 +6,7 @@ It is very important to understand traffic system, especially service area. Serv
 To create service area, we have to gather transit dara. Except Japan, it is possible to get the transit data(duration, fare...) from google API. Also ArcGIS provide some function to create service area. However, it is very expensive for student. So this package provide some function to get transit data from yahoo transit service.
 The aim of this package is creating service area.
 
-![](http://john-coene.com/ig/graphTweets.png)
+![](https://github.com/kmbsweb/Jtransit/blob/master/pic/fare%20vs%20duration.PNG?raw=true)
 
 Visualise networks of Twitter interactions.
 
