@@ -6,7 +6,7 @@
 #' @param st_time2 time minutes numeric
 #' @param st_time1 time minutes numeric
 #'
-#' @importFrom rvest read_html
+#' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes
 #' @importFrom rvest html_text
 #' @importFrom base paste0

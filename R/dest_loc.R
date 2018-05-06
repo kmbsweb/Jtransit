@@ -3,9 +3,9 @@
 #' @param data data.frame
 #' @param x colm number colname must be "location"
 #'
-#' @importFrom rvest read_html
+#' @importFrom xml2 read_html
 #' @importFrom rvest html_nodes
-#' @importFrom rvest xml_find_all
+#' @importFrom xml2 xml_find_all
 #' @importFrom rvest html_text
 #' @importFrom base paste0
 #' @importFrom dplyr full_join
