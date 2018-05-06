@@ -26,7 +26,7 @@ devtools::install_github("kmbsweb/Jtransit")
 
 ## Documentation 
 
-* [Examples](http://graphtweets.john-coene.com/)
+* [Examples](https://kmbsweb.wordpress.com/)
 
 ## Features
 
