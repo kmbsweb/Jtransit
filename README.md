@@ -8,21 +8,20 @@ The aim of this package is creating service area.
 
 ![](https://github.com/kmbsweb/Jtransit/blob/master/pic/fare%20vs%20duration.PNG?raw=true)
 
-Visualise networks of Twitter interactions.
+Get the Japanese transit data.
 
 * [Install](#install)
 * [Documentation](#documentation)
 * [Features](#features)
-* [Rationale](#rationale)
 * [Examples](#examples)
 
-**Updated the package to better suit `rtweets`**
+**Updated the package to better suit `rvest`**
 
 ## Install
 
 ```R
-install.packages("graphTweets") # CRAN release v0.4
-devtools::install_github("JohnCoene/graphTweets") # dev version
+# dev version only
+devtools::install_github("kmbsweb/Jtransit") 
 ```
 
 ## Documentation 
@@ -33,71 +32,61 @@ devtools::install_github("JohnCoene/graphTweets") # dev version
 
 *`v4`*
 
-- `gt_edges` - get edges.
-- `gt_nodes` - get nodes, with or without metadata.
-- `gt_dyn` - create dynamic graph.
-- `gt_graph` - create `igraph` graph object.
-- `gt_save` - save the graph to file
-- `gt_collect` - collect nodes and edges.
+- `transit` - get duration and fare from origin to destianation.
+- `dest.loc` - facility geocoding.
+- `transit.map.fare` - create map of fare.
+- `transit.map.dura` - create map of duration.
 
 See `NEWS.md` for changes.
 
-## Rationale
-
-Functions are meant to be run in a specific order.
-
-1. Extract edges
-2. Extract the nodes
-
-One can only know the nodes of a network based on the edges, so run them in that order. However, you can build a graph based on edges alone:
-
-```R
-library(igraph) # for plot
-
-tweets %>% 
-  gt_edges(text, screen_name, status_id) %>% 
-  gt_graph() %>% 
-  plot(., vertex.size = degree(.) * 10)
-```
-
-This is useful if you are building a large graph and don't need any meta data on the nodes (other than those you can compute from the graph, i.e.: `degree` like in the example above). If you need meta data on the nodes use `gt_nodes`.
-
-```R
-library(igraph) # for plot
-
-tweets %>% 
-  gt_edges(text, screen_name, status_id) %>% 
-  gt_nodes(meta = TRUE) %>% # set meta to TRUE
-  gt_graph() -> g 
-
-# replace NAs
-V(g)$followers_count <- ifelse(!is.na(V(g)$followers_count), V(g)$followers_count, 1)
-  
-plot(g, vertex.size = log1p(V(g)$followers_count)) # size nodes by follower count.
-```
 
 ## Examples
 
 ```R
-library(rtweet)
+library(Jtransit)
 
-# Sys.setlocale("LC_TIME", "English")
+# one origin, one destination
+# origin:神戸大学, destination:夙川駅
+# departure:14:15
+transit("神戸大学","夙川駅",14,1,5)
 
-tweets <- search_tweets("#rstats")
+# result
+# origin destination time_h time_m1 time_m2 duration  fare   transit
+# 神戸大学      夙川駅     14       1       5     29分 220円 乗換：0回
+# alternative
+#      6
+```
 
-library(graphTweets)
+```R
+# more than 2 origins, more than 2 destinations
+# make the example data.frame
+# remove the blank
 
-# simple network
-tweets %>% 
-  gt_edges(text, screen_name, status_id) %>% # get edges
-  gt_nodes %>% # get nodes
-  gt_graph %>% # build igraph object
-  plot(.)
+df <- read.csv(textConnection(
+"origin,destination,origin2
+神戸大学,夙川駅,
+神戸大学,阪急六甲駅,
+神戸大学,王子公園駅,
+神戸大学,阪急岡本駅,
+神戸大学,阪急花隈駅,
+神戸大学,阪急御影駅,
+神戸大学,神戸三宮駅,
+神戸大学,西宮北口駅,"
+))
 
-# dynamic graph
-tweets %>% 
-  gt_edges(text, screen_name, status_id, "created_at") %>% # add created time
-  gt_nodes(TRUE) %>%
-  gt_dyn %>% # make dynamic
-  gt_save # save as .graphml
+or <- as.character(df$origin)
+des <- as.character(df$destination)
+
+# prepare for the blank data.frame
+# ErrorPage <- NULL
+Data <- data.frame()
+
+# repetition processing
+for (i in seq(or)){
+  print(paste0("...", i, "行目を処理しています。"))
+  exdata <- transit(or[i],des[i],14,1,5)
+    #row bind
+  Data <- rbind(Data, exdata)
+  }
+
 ```
