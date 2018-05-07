@@ -50,6 +50,7 @@ See `NEWS.md` for changes.
 
 ```R
 library(Jtransit)
+library(dplyr)
 
 # one origin, one destination
 # origin:神戸大学, destination:夙川駅
