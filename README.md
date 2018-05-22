@@ -33,9 +33,9 @@ devtools::install_github("kmbsweb/Jtransit")
 
 - `transit` - get duration and fare from origin to destianation.
 - `covert_m` - converting unit(from hour to minute).
-- `dest.loc` - facility geocoding.
-- `transit.map.fare` - create map of fare.
-- `transit.map.dura` - create map of duration.
+- `dest_loc` - facility geocoding.
+- `transit_map_fare` - create map of fare.
+- `transit_map_dura` - create map of duration.
 
 *`data`*
 
