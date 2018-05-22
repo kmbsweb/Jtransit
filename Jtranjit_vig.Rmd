@@ -1,0 +1,98 @@
+---
+title: "Jtransit パッケージについて"
+author: "Keigo Matsuo"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+必要なパッケージをダウンロードしていきます。`Jtransit` はCRANではありませんので`devtools`を利用して下記のようにダウンロードして下さい。
+
+    devtools::install_github("kmbsweb/Jtransit") 
+```{r }
+library(Jtransit)
+library(dplyr)
+library(fuzzyjoin)
+```
+
+
+## データ
+`Jtransit`には、全国の駅の緯度経度情報および兵庫県の駅（乗降客数を含む）の情報が含まれています。必要な範囲（box）を指定し対象とする駅を絞り込みます。ただ`hyo_sta`には緯度経度の情報が含まれていないため、上記で絞り込んだ対象データと結合させます。本vignetteでは、`fuzzyjoin`パッケージを使ってデータを結合します。駅名が完全一致しなくても結合してくれます。
+
+```{r }
+data(all_sta)
+data(hyo_sta)
+
+hyo_sta1 <- filter(all_sta, xcoord<135.45,135.05<xcoord) %>%
+  filter(ycoord<34.9,34.6<ycoord) 
+
+joined <- hyo_sta1 %>%
+  stringdist_inner_join(hyo_sta, by = c(N02_005 = "station_1"), max_dist = 1)
+```
+
+## 乗換データの取得
+
+`or`はorigine(=出発地点)、`des`はdestination(=目的地)を表します。今回は、出発地を神戸大学、目的地を神戸市付近の各駅とします。空のデータフレームを準備し、`jtranjit`コマンドを使って、所要時間、運賃、乗換回数の情報を取得し取得できたデータ（行）を空のフレームに結合していきます。空のフレームを設定しておかなければ、データが上書きされていくことになるので注意してください。
+
+
+    or <-  rep(c("神戸大学"), 295)
+    des <- as.character(joined$station_2)
+
+    # 空のデータフレームを準備
+    Data <- data.frame()
+      
+    # 連続処理
+    for (i in seq(or)){
+    print(paste0("...", i, "行目を処理しています。"))
+    exdata <- transit(or[i],des[i],14,1,5)
+    #row bind
+    Data <- rbind(Data, exdata)
+    }
+
+## データ処理
+  3つのステップ（時間処理、運賃、データ結合）を通して、ggmapで表現するためのデータフレームを作成していきます。具体的には、時間処理では～時間～分という表記から～分に統一し、数値のみとします。`covert_m`のコマンドを使って処理を楽にします。運賃は、”円”を取り除き数値のみとします。最後に`transit_map_dura`、`transit_map_fare`に適合するデータフレームを作成します。今回は200分以内でいける駅のみとし、`FD2`というデータフレームが得られました。
+
+###1.時間処理
+
+    Data$duration <- gsub("分","m", Data$duration)
+    Data$duration <- gsub("時間","h", Data$duration)
+
+    time <- Data$duration
+    dataF <- data.frame(origin=or,time=time)
+    #結果
+    DD <- covert_m(dataF,2)
+
+
+
+###2.運賃
+
+    Data$fare <- as.numeric(gsub("円", "", Data$fare))
+
+###3.データ結合（緯度経度含む）
+
+    FD <- data.frame(joined[,8],DD[,4],Data$fare,joined[,6:7])
+    names(FD)[1]<-"destination"
+    names(FD)[2]<-"duration"
+    names(FD)[3]<-"fare"
+    names(FD)[4]<-"longitude"
+    names(FD)[5]<-"latitude"
+
+    FD2 <- FD %>%
+    filter(duration< 200) 
+
+## 地図による可視化
+　ggmapにより取得したデータを可視化します。`transit_map_dura`、`transit_map_fare`の第1引数には、地図の中心とする緯度経度情報（今回は神戸大学の緯度経度）、第2引数には地図の倍率（適宜変更して下さい）、第3引数には対象とするデータフレームを与えて下さい。ただし、上記3.の型で作成しなければエラーとなります。
+
+    library(ggmap)
+    transit_map_dura(135.235395,34.725918,11,FD2)
+    transit_map_fare(135.235395,34.725918,11,FD2)
